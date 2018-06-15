@@ -160,11 +160,9 @@ export default {
           params.set('gender', this.$parent.gender)
           params.set('age', this.$parent.age)
           params.set('layout', that.graph.type)
-          params.set('task', 3)
+          params.set('set', that.file)
           params.set('groupSize', that.graph.groupSize)
-          params.set('pgroup', that.graph.pgroup)
-          params.set('pout', that.graph.pout)
-          params.set('file', that.graph.file)
+          params.set('file', '' + that.dataNum + '.json')
           if (that.choice[0] == that.graph.linkMax){
             that.answer = 1
           } else {
