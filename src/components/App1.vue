@@ -2,7 +2,7 @@
 <div>
   <div id="app" class="app">
     <el-container>
-      <el-aside width='20%'>
+      <!-- <el-aside width='20%'>
         <div class='text'>
           Which box does have the most intra-links?<br><br>
           グループ内リングか一番多いものを選んでください。
@@ -12,8 +12,9 @@
           <label>Adjust width</label>
           <el-slider v-model="settings.width"></el-slider>
         </div>
-      </el-aside>
-      <el-main>
+      </el-aside> -->
+      <el-main> 
+        {{level}} - {{file}} <br><br>
         <div class="svg-container" :style="{width: settings.width + '%'}">
           <svg id="svg" pointer-events="all" viewBox="0 0 960 600" preserveAspectRatio="xMinYMin meet">
       <g id="nodes">{{nodes}}</g>
@@ -52,33 +53,35 @@ export default {
       choice: [],
       dataNum: 0,
       dataArray: [],
-      dataMax: 20,
+      dataMax: null,
       startTime: null,
       time: null,
       answer: null,
       totalQue: 120,
+      level: null,
+      file: null,
     }
   },
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    that.dataNum = that.$parent.num1
-    if (that.$parent.num1 >= that.dataMax){
-      that.dataArray = that.$parent.set1
-    } else {
-      for (let i=0; i < that.totalQue; i++) {
-        that.dataArray.push(i)
-      }
-      // for (var i = that.dataArray.length - 1; i > 0; i--) {
-      //   var r = Math.floor(Math.random() * (i + 1));
-      //   var tmp = that.dataArray[i];
-      //   that.dataArray[i] = that.dataArray[r];
-      //   that.dataArray[r] = tmp;
-      // }
-      that.$parent.set1 = that.dataArray
+    if (that.$parent.levels[that.$parent.current] == 'high/'){
+      that.level = 'difficult'
+    } else if (that.$parent.levels[that.$parent.current] == 'low/') {
+      that.level = 'easy'
+    }
+    that.file = that.$parent.nums[that.$parent.current]
+    if (that.$parent.levels[that.$parent.current] == 'low/'){
+      that.dataMax = 30
+    }
+    else if (that.$parent.levels[that.$parent.current] == 'high/') {
+      that.dataMax = 20
+    }
+    for (let i=0; i < that.dataMax; i++) {
+      that.dataArray.push(i)
     }
     console.log("mounted");
-    d3.json("./src/data/low/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+    d3.json("./src/data/" + that.$parent.levels[that.$parent.current] + '' + that.$parent.nums[that.$parent.current] + '/' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
       // if (err) throw err;
       that.graph = graph
       that.graph.groups.pop()
@@ -96,11 +99,12 @@ export default {
       that.dataNum += 1
       console.log('num is ' + '' + that.dataNum)
       if (that.dataNum % that.dataMax == 0) {
-        that.$parent.num1 = that.dataNum
+        this.$parent.current += 1
+
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       } else {
-        d3.json("./src/data/low/" + '' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+        d3.json("./src/data/" + that.$parent.levels[that.$parent.current] + '' + that.$parent.nums[that.$parent.current] + '/' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
           that.graph = graph
           // console.log(that.graph.linkMax)
           that.graph.groups.pop()
@@ -543,8 +547,8 @@ body {
 
 .app {
   margin: auto;
-  width: 95%;
-  height: 95%;
+  width: 80%;
+  height: 80%;
   font-family: 'serif';
 }
 

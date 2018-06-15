@@ -6,10 +6,7 @@
       <div id="dataInput">
         <div class="dataInput">
           <el-row>
-            <el-button type="primary" v-on:click="click1">　　　　level 1　　　　</el-button>
-          </el-row>
-          <el-row>
-            <el-button type="success" v-on:click="click2">　　　　level 2　　　　</el-button>
+            <el-button type="primary" v-on:click="click">　　　　level 1　　　　</el-button>
           </el-row>
           <br><br>
           <el-row :gutter='20' v-if='nextPage != null'>
@@ -37,7 +34,6 @@ export default {
       age: null,
       gender: "Male",
       nextPage: null,
-      each: 120,
     }
   },
   mounted: function() {
@@ -57,20 +53,12 @@ export default {
       this.$parent.age = this.Age
       this.$parent.gender = this.gender
     },
-    click1: function(event) {
-      if (this.$parent.num1 != this.each){
+    click: function(event) {
+      if (this.$parent.current != this.$parent.total){
         this.nextPage = 'App1'
         window.addEventListener('keyup', this.submit, false)
       } else {
-        swal('You have already done this course.')
-      }
-    },
-    click2: function(event) {
-      if (this.$parent.num2 != this.each){
-        this.nextPage = 'App2'
-        window.addEventListener('keyup', this.submit, false)
-      } else {
-        swal('You have already done this course.')
+        swal('You have done all questions, Thank you!')
       }
     },
     submit: function(event) {

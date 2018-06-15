@@ -18,57 +18,23 @@ api = Api(app)
 # datasetpart = {}
 # datasetparthourly = {}
 
+@app.route("/")
+def index():
+    return "Hello World!"
 
-# def cors(func, allow_origin=None, allow_headers=None, max_age=None):
-#     if not allow_origin:
-#         allow_origin = "*"
-#     if not allow_headers:
-#         allow_headers = "content-type, accept"
-#     if not max_age:
-#         max_age = 60
-#
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         response = func(*args, **kwargs)
-#         cors_headers = {
-#             "Access-Control-Allow-Origin": allow_origin,
-#             "Access-Control-Allow-Methods": func.__name__.upper(),
-#             "Access-Control-Allow-Headers": allow_headers,
-#             "Access-Control-Max-Age": max_age,
-#         }
-#         if isinstance(response, tuple):
-#             if len(response) == 3:
-#                 headers = response[-1]
-#             else:
-#                 headers = {}
-#             headers.update(cors_headers)
-#             return (response[0], response[1], headers)
-#         else:
-#             return response, 200, cors_headers
-#     return wrapper
-#
-#
-# def abortIfNotExist(fileName):
-#     filepath = '../data/json/' + fileName
-#     if not os.path.exists(filepath):
-#         abort(404, message="{} doesn't exist".format(fileName))
-#
-#
-# class Resource(Resource):
-#     method_decorators = [cors]
-#
-#
+
 def write(array):
     post = Choice(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8], array[9], array[10])
     print(post, array)
     db.session.add(post)
     db.session.commit()
 
+
 class Hello(Resource):
     def get(self, params):
         param = params.split('&')
         param = [p.split('=')[1] for p in param]
-        print(param)
+        # print(param)
         write(param)
         return param
 

@@ -7,35 +7,50 @@
 <script>
 import Vue from 'vue'
 import App1 from './components/App1.vue'
-import App2 from './components/App2.vue'
-import App3 from './components/App3.vue'
-import App4 from './components/App4.vue'
 import Menu from './components/menu.vue'
 import dataInput from './components/dataInput.vue'
 Vue.component('dataInput', dataInput)
 Vue.component('App1', App1)
-Vue.component('App2', App2)
-Vue.component('App3', App3)
-Vue.component('App4', App4)
 Vue.component('Menu', Menu)
 export default {
   name: 'home',
   data: function() {
     return {
-      currentPage: 'dataInput',
+      currentPage: null,
       userName: 'null',
       gender: 'null',
       age: null,
       already: null,
-      set1: [],
-      num1: 0,
-      set2: [],
-      num2: 0,
-      set3: [],
-      num3: 0,
-      set4: [],
-      num4: 0,
+      levels: [],
+      nums: [],
+      current: 0,
+      total: 15,
     }
+  },
+  mounted: function(){
+    let that = this
+    console.log('home mounted')
+    for(let i = 0; i < that.total; i++){
+      console.log(i)
+      if(i < 9){
+        that.levels.push('high/')
+        that.nums.push(i)
+      } else {
+        that.levels.push('low/')
+        that.nums.push(i - 9)
+      }
+    }
+    for(let j = that.nums.length - 1; j > 0; j--){
+      let r = Math.floor(Math.random() * (j + 1));
+      let tmp = that.nums[j];
+      that.nums[j] = that.nums[r];
+      that.nums[r] = tmp;
+      tmp = that.levels[j];
+      that.levels[j] = that.levels[r];
+      that.levels[r] = tmp;
+    }
+    console.log(that.levels)
+    that.currentPage = 'dataInput'
   }
 }
 </script>
