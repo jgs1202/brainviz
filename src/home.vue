@@ -24,7 +24,7 @@ export default {
       levels: [],
       nums: [],
       current: 0,
-      total: 15,
+      total: 10,
     }
   },
   mounted: function(){
@@ -32,12 +32,12 @@ export default {
     console.log('home mounted')
     for(let i = 0; i < that.total; i++){
       console.log(i)
-      if(i < 9){
+      if(i < 6){
         that.levels.push('high/')
         that.nums.push(i)
       } else {
         that.levels.push('low/')
-        that.nums.push(i - 9)
+        that.nums.push(i - 6)
       }
     }
     for(let j = that.nums.length - 1; j > 0; j--){
