@@ -20,4 +20,14 @@ npm run dev
 npm run build
 ```
 
+## Generate TRGIB layouts
+
+``` bash
+# change directory
+cd trgib/py
+
+# run program
+python run.py
+```
+
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
