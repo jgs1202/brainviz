@@ -7,7 +7,7 @@ import numpy as np
 
 
 def makeData():
-    eachNum = 2
+    eachNum = 20
     output = ['FDGIB', 'TRGIB']
     # mset = [12, 15, 18]
     thre = 0.3
@@ -135,6 +135,7 @@ def makeData():
                                     current += 1
                                     linkCount += 1
 
+                    # (len(nodes))
 
                     nodes_for_write = []
                     nodeCount = 0
@@ -185,7 +186,6 @@ def makeData():
                             for p in range(m+1):
                                 if p == m:
                                     intM = p
-                            # print( len(data['nodes']), len(data['links']))
                             data['groupSize'] = intM
                             json.dump(data, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
                         except:
@@ -193,7 +193,6 @@ def makeData():
 
                     else:
                         pass
-                        # print(data['mostConnected'])
                 # f = open('../data/links.json', 'w')
                 # json.dump(links, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
 

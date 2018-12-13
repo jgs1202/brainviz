@@ -36,7 +36,6 @@ def add(layout):
                     sentence = ''
                     num = 0
                     name = 0
-                    # print(main[dir], num)
                     for i in txt:
                         try:
                             i = int(i)

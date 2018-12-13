@@ -31,7 +31,6 @@ def makeData(center, links, boxes, data, linkNum):
                 dic['node1'] = i
                 dic['node2'] = i+j
                 links.append(dic)
-    print(links)
 
 
 def checkPRISM(center, links, boxes, width, height):
@@ -213,10 +212,7 @@ def checkAll(center, boxes, data, width, height):
 
                 dis1 = math.sqrt(math.pow((center[links[i]['node1']][0] - width/2), 2) + math.pow((center[links[i]['node1']][1] - height/2), 2) )
                 dis2 = math.sqrt(math.pow((center[links[i]['node2']][0] - width/2), 2) + math.pow((center[links[i]['node2']][1] - height/2), 2) )
-                # print(dis1, dis2)
-                # print(which['key'])
                 if which[i]['key'] == 'x':
-                    # print('xmove')
                     if dis1 > dis2 and random.random() > 0.2: #which group should we move
                         if center[links[i]['node1']][0] < center[links[i]['node2']][0]: #which direction should we move to
                             # print('1')

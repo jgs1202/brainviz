@@ -17,7 +17,6 @@ def force(data, width, height, groups):
     #     G.add_edge(i, length)
     # calculate the number of links in each group
     linkNum = count_link(data)
-    # print(linkNum)
     for i in range(len(linkNum)):
         for j in range(len(linkNum[i])):
             if linkNum[i][j] != 0:
@@ -25,7 +24,6 @@ def force(data, width, height, groups):
 
     # plt.figure(figsize=(9.6, 6))
     pos = nx.spring_layout(G)
-    # print(pos)
     # nx.draw_networkx(G, pos)
     # plt.ylim(1, -1)
     # plt.show()
@@ -56,7 +54,7 @@ def force(data, width, height, groups):
     #     pl.gca().add_patch(pl.Rectangle(xy=[i['x'], height - i['y']], width=i['dx'], height=i['dy'], linewidth='1.0', fill=False))
     # pl.show()
 
-    print(len(data['groups']))
+    # print(len(data['groups']))
     data = prism(data, linkNum, width, height)
     return data
 

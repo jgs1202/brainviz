@@ -7,7 +7,6 @@ import sys
 
 
 def sizing(data):
-    print(data['groups'])
     del data['groups'][-1]
     width = 1620.7
     width = 960
@@ -45,23 +44,18 @@ def sizing(data):
         which = 'x'
     else :
         which = 'y'
-    # print(xmin, xmax, ymin, ymax, reWidth, reHeight)
     if which == 'x':
-        # print('width')
         span = (reWidth * outHeight / outWidth - reHeight)/2
         ymin -= span
         ymax += span
         reHeight = reWidth * height / width
         ratio = (outHeight) / reHeight
     if which == 'y':
-        # print('height')
         span = (reHeight * outWidth / outHeight - reWidth)/2
         xmin -= span
         xmax += span
         reWidth = reHeight * width / height
         ratio = outHeight / reHeight
-
-    # print(xmin, xmax, ymin, ymax, reWidth, reHeight)
 
     if which == 'x':
         for i in  range(len(data['groups'])):
@@ -77,7 +71,6 @@ def sizing(data):
             data['groups'][i]['y'] = (data['groups'][i]['y'] - ymin) * ratio
             data['groups'][i]['dx'] *= ratio
             data['groups'][i]['dy'] *= ratio
-    # print(ratio)
 
 
     for i in range(len(data['groups'])):
@@ -87,9 +80,6 @@ def sizing(data):
         if which == 'y':
             data['groups'][i]['x'] += margin + span*ratio
             data['groups'][i]['y'] += margin
-
-    # print(span, (outWidth - reWidth)/2)
-    # print(reWidth, reHeight)
 
     first = 0
     for i in data['groups']:
@@ -108,7 +98,6 @@ def sizing(data):
                 ymin = i['y']
             if i['y'] + i['dy'] > ymax:
                 ymax = i['y'] + i['dy']
-    # print(data['groups'])
     dic = {}
     dic['x'] = 0
     dic['y'] = 0
@@ -121,7 +110,6 @@ def sizing(data):
 
     sizes.append(data['groupSize'])
 
-    print(len(data['groups']))
     return data
 
 
@@ -136,10 +124,8 @@ def main():
         if file[-5:] == '.json':
             print(file)
             path = main + file
-            # print(path)
             resize(path, num, main)
             num += 1
-    # print(sizes.count(8), sizes.count(17))
 
 if __name__ == '__main__':
     global width

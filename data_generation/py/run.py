@@ -85,7 +85,6 @@ def fd():
             # for i in range(graph['groupSize']):
             #     graph['groups'][i]['id'] = graph['groups'][i]['name']
             # graph = json.load(open(path))
-            print(len(graph['groups']))
             with_box = sizing(force(graph, width, height, groups))
             out = '../data/origin/FDGIB/'
             try:
@@ -122,7 +121,7 @@ def make_index_group(graph, width, height):
 def main():
     print('Generating origin data...')
     makeData()
-    # tr()
+    tr()
     fd()
 
 

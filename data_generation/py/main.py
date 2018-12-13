@@ -67,7 +67,7 @@ def main():
 
     graph = json.load(open(args.infile))
     run(graph, args.width, args.height, args.outfile)
-    print(graph, args.width, args.height, args.outfile)
+    # print(graph, args.width, args.height, args.outfile)
 
 
 if __name__ == '__main__':
