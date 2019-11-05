@@ -6,11 +6,14 @@
       <div id="dataInput">
         <div class="dataInput">
           <el-row>
-            <el-button type="primary" v-on:click="click">　　　　Start　　　　</el-button>
+            <el-button type="primary" v-on:click="click1">　　　　level 1　　　　</el-button>
+          </el-row><br><br>
+          <el-row>
+            <el-button type="primary" v-on:click="click2">　　　　level 2　　　　</el-button>
           </el-row>
           <br><br>
           <el-row :gutter='20' v-if='nextPage != null'>
-            <el-col :span='10' :offset="7">
+            <el-col :span='10' :offset="7"> 
               <el-alert :closable=false :center=true title="Press enter to start experiments." type="success">
               </el-alert>
             </el-col>s
@@ -53,8 +56,18 @@ export default {
       this.$parent.age = this.Age
       this.$parent.gender = this.gender
     },
-    click: function(event) {
-      if (this.$parent.current != this.$parent.total){
+    click1: function(event) {
+      if (this.$parent.nums[0] != this.$parent.total){
+        this.$parent.level = 0
+        this.nextPage = 'App1'
+        window.addEventListener('keyup', this.submit, false)
+      } else {
+        swal('You have done all questions, Thank you!')
+      }
+    },
+    click2: function(event) {
+      if (this.$parent.nums[1] != this.$parent.total){
+        this.$parent.level = 1
         this.nextPage = 'App1'
         window.addEventListener('keyup', this.submit, false)
       } else {

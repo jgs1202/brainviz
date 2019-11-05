@@ -6,6 +6,7 @@ import json
 import networkx as nx
 from PRISM import main as prism
 from statistics import mean
+import matplotlib.pyplot as plt
 
 
 def force(data, width, height, groups):
@@ -22,11 +23,13 @@ def force(data, width, height, groups):
             if linkNum[i][j] != 0:
                 G.add_edge(i, i + j + 1, weight=linkNum[i][j])
 
-    # plt.figure(figsize=(9.6, 6))
+    plt.figure(figsize=(9.6, 6))
     pos = nx.spring_layout(G)
-    # nx.draw_networkx(G, pos)
-    # plt.ylim(1, -1)
-    # plt.show()
+    nx.draw_networkx(G, pos)
+    plt.ylim(1, -1)
+    plt.show()
+    nx.draw(pos, node_color='b', node_size=50, with_labels=False)
+
     xs, ys = [], []
     for i in range(length):
         temp = pos[i]
@@ -90,10 +93,20 @@ def count_link(data):
                     linkNum[target][source - target] += 1
     return linkNum
 
+
 if __name__ == '__main__':
     data = 1
-    for i in os.listdir('../data/'):
+    dir = '../data/origin/FDGIB/high-mid/'
+    for i in os.listdir(dir):
         if i[-5:] == '.json':
-            data = json.load(open('../data/' + i))
-            break
-    force(data, 960, 600, 1)
+            data = json.load(open(dir + i))
+
+    groups = [[] for i in range(data['groupSize'])]
+    length = len(data['nodes'])
+    nodes = data['nodes']
+    for i in range(data['groupSize']):
+        dic = {}
+        dic['number'] = i
+        groups[nodes[i]['group']].append(dic)
+
+    force(data, 960, 600, groups)

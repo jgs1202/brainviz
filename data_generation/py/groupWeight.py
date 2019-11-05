@@ -98,20 +98,6 @@ if __name__ == '__main__':
 	# global dir
 	for file in os.listdir(main):
 		if file != '.DS_Store':
-			# try:
-				# global file
-			# for file in os.listdir(main + dir):
-			# 	print(file)
-			# 	if file != '.DS_Store':
-					# print(file)
-					# global path
 			path = main + file
 			# print('test')
 			test(path, file)
-			# 	else:
-			# 		print('error')
-			# # except:
-			# 	print(dir,file)
-			# 	pass
-		# else:
-		# 	print('error')

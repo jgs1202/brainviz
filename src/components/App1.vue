@@ -51,8 +51,6 @@ export default {
       links: [],
       boxes: [],
       choice: [],
-      dataNum: 0,
-      dataArray: [],
       dataMax: null,
       startTime: null,
       time: null,
@@ -65,57 +63,40 @@ export default {
   mounted: function() {
     window.addEventListener('keyup', this.onClick)
     var that = this;
-    if (that.$parent.levels[that.$parent.current] == 'high/'){
-      that.level = 'difficult'
-    } else if (that.$parent.levels[that.$parent.current] == 'low/') {
+    if (that.$parent.level == 0){
       that.level = 'easy'
+    } else if (that.$parent.level == 1) {
+      that.level = 'difficult'
     }
-    that.file = that.$parent.nums[that.$parent.current]
-    if (that.$parent.levels[that.$parent.current] == 'low/'){
-      that.dataMax = 30
-    }
-    else if (that.$parent.levels[that.$parent.current] == 'high/') {
-      that.dataMax = 20
-    }
-    for (let i=0; i < that.dataMax; i++) {
-      that.dataArray.push(i)
-    }
-    console.log("mounted");
-    d3.json("./src/data/" + that.$parent.levels[that.$parent.current] + '' + that.$parent.nums[that.$parent.current] + '/' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
-      // if (err) throw err;
+    that.dataMax = that.$parent.total / 1
+    d3.json("./src/data/" + that.$parent.levelIndex[that.$parent.level] + '/' + that.$parent.nums[that.$parent.level] + ".json").then(function(graph) {
       that.graph = graph
       that.graph.groups.pop()
-      // console.log("json")
       that.$set(that.nodes, that.reNodes())
       that.$set(that.links, that.reLinks())
       that.$set(that.boxes, that.reBoxes())
-      // console.log(that.graph.nodes.length)
     })
     that.startTime = Date.now()
   },
   methods: {
     restart: function() {
       var that = this;
-      that.dataNum += 1
-      console.log('num is ' + '' + that.dataNum)
-      if (that.dataNum % that.dataMax == 0) {
-        this.$parent.current += 1
-
+      that.$parent.nums[that.$parent.level] += 1
+      console.log('num is ' + '' + that.$parent.nums[that.$parent.level])
+      if (that.nums[that.$parent.level] % that.dataMax == 0) {
         this.$parent.already = 1
         this.$parent.currentPage = 'Menu'
       } else {
-        d3.json("./src/data/" + that.$parent.levels[that.$parent.current] + '' + that.$parent.nums[that.$parent.current] + '/' + that.dataArray[that.dataNum] + ".json").then(function(graph) {
+        d3.json("./src/data/" + that.$parent.levelIndex[that.$parent.level] + '/' + that.$parent.nums[that.$parent.level] + ".json").then(function(graph) {
           that.graph = graph
-          // console.log(that.graph.linkMax)
           that.graph.groups.pop()
           that.$set(that.nodes, that.reNodes())
           that.$set(that.links, that.reLinks())
           that.$set(that.boxes, that.reBoxes())
         })
-        var sync = document.getElementsByClassName('sync')
-        // console.log(sync[0].style.background)
+        let sync = document.getElementsByClassName('sync')
         for(let i=0; i<sync.length; i++){
-          if ( that.dataNum % 2 == 0 ){
+          if ( that.nums[that.$parent.level] % 2 == 0 ){
             sync[i].style.background = 'black'
           } else {
             sync[i].style.background = 'white'
@@ -126,6 +107,7 @@ export default {
     },
     reNodes: function() {
       var that = this;
+      console.log('renodes')
       if (that.graph) {
         d3.selectAll('circle').remove()
         d3.select("svg").append("g")
@@ -138,7 +120,7 @@ export default {
           .attr("r", 3)
         return d3.selectAll("circle")
           .each(function(d, i) {
-            var selection = d3.select(this)
+            let selection = d3.select(this)
             selection.transition()
               .attr('cx', that.graph.nodes[i].cx)
               .attr("cy", that.graph.nodes[i].cy)
@@ -152,7 +134,6 @@ export default {
     onClick: function(event) {
       if (event.keyCode == '13') {
         var that = this
-        // console.log(that.graph)
         if (that.choice.length == 1) {
           that.time = Date.now() - that.startTime
           const params = new URLSearchParams()
@@ -162,18 +143,14 @@ export default {
           params.set('layout', that.graph.type)
           params.set('set', that.file)
           params.set('groupSize', that.graph.groupSize)
-          params.set('file', '' + that.dataNum + '.json')
+          params.set('file', '' + that.nums[that.$parent.level] + '.json')
           if (that.choice[0] == that.graph.linkMax){
             that.answer = 1
           } else {
             that.answer = 0
           }
-          console.log('the answer is')
-          console.log(that.answer)
-          // console.log(that.answer, that.graph.linkMax, that.choice[0])
           params.set('answer', that.answer)
           params.set('time', that.time)
-          // params.set('choice1', that.choice[1])
           const url = `http://127.0.0.1:5000/data/${params.toString()}`
           axios.get(url)
             .then(res => {
@@ -184,13 +161,7 @@ export default {
           d3.selectAll('circle').remove()
           d3.selectAll('line').remove()
           d3.selectAll('rect').remove()
-          // that.graph = 0
-          // d3.select('svg').remove()
           that.restart()
-          // console.log('boxes')
-          // } else {
-          //   swal('Choose 1 boxes.')
-          // }
         }
       }
     },
@@ -208,11 +179,8 @@ export default {
           })
         d3.selectAll("line")
           .each(function(d, i) {
-            // console.log('d is ')
-            // console.log(d)
             var selection = d3.select(this)
             selection.attr('x1', function(d) {
-                // console.log(that.graph.nodes[d.source].cx)
                 return that.graph.nodes[d.source].cx
               })
               .attr('y1', function(d) {
@@ -247,24 +215,11 @@ export default {
           .attr("fill", 'transparent')
 
         function func(event) {
-          // console.log(event)
           d3.selectAll('rect')
             .each(function(d, i) {
               if (event.x == d.x && event.y == d.y) {
                 var selection = d3.select(this)
                 if (selection.attr('stroke') == 'black') {
-                  // selection.remove()
-                  // console.log(this.attributes.index)
-                  // d3.select("svg").append("rect")
-                  //   .attr("stroke", d3.rgb(102, 200, 255))
-                  //   .attr("stroke-width", 3)
-                  //   .attr("fill", 'transparent')
-                  //   .attr('index', this.attributes.index)
-                  //   .attr('x', this.x.animVal.value)
-                  //   .attr('y', this.y.animVal.value)
-                  //   .attr('width', this.width.animVal.value)
-                  //   .attr('height', this.height.animVal.value)
-                  //   .on('click', func)
                   d3.selectAll('rect')
                     .attr("stroke-width", 1)
                     .attr('stroke', 'black')
@@ -284,7 +239,6 @@ export default {
                   for (let i in that.graph.groups) {
                     if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
                       tmp = i
-                      console.log(i)
                       break
                     }
                   }
@@ -296,9 +250,7 @@ export default {
                 }
               }
             })
-          console.log(that.choice)
         }
-
         return d3.selectAll('rect')
           .each(function(d, i) {
             if (d['dx'] != that.settings.svgWigth || d['dy'] != that.settings.svgHeight) {
@@ -314,223 +266,6 @@ export default {
       }
     }
   },
-  computed: {
-    // nodes: function() {
-    //   var that = this;
-    //   if (that.graph) {
-    //     console.log('this is')
-    //     console.log(this)
-    //     return d3.select("svg").append("g")
-    //       .attr("class", "nodes")
-    //       .selectAll("circle")
-    //       .data(that.graph.nodes)
-    //       .enter().append("circle")
-    //       .attr('cx', 0)
-    //       .attr('cy', 0)
-    //       .attr("r", 20)
-    //       .attr("fill", function(d, i) {
-    //         return that.color(i);
-    //       })
-    // .call(d3.drag()
-    //   .on("start", function dragstarted(d) {
-    //     if (!d3.event.active) that.simulation.alphaTarget(0.3).restart();
-    //     d.fx = d.x;
-    //     d.fy = d.y;
-    //   })
-    //   .on("drag", function dragged(d) {
-    //     d.fx = d3.event.x;
-    //     d.fy = d3.event.y;
-    //   })
-    //   .on("end", function dragended(d) {
-    //     if (!d3.event.active) that.simulation.alphaTarget(0);
-    //     d.fx = null;
-    //     d.fy = null;
-    //   }));
-    //   }
-    // },
-    // nodes: function(){
-    //   console.log('nodes')
-    //   return this.reNodes()
-    // },
-    exnodes: function() {
-      var that = this;
-      if (that.graph) {
-        d3.select("svg").append("g")
-          .attr("class", "nodes")
-          .selectAll("circle")
-          .data(that.graph.nodes)
-          .enter().append("circle")
-          .attr('cx', 0)
-          .attr('cy', 0)
-          .attr("r", 5)
-        return d3.selectAll("circle")
-          .each(function(d, i) {
-            // console.log(d)
-            // console.log(this)
-            // console.log(that.graph.nodes[i].cx)
-            var selection = d3.select(this)
-            selection.transition()
-              .attr('cx', that.graph.nodes[i].cx)
-              .attr("cy", that.graph.nodes[i].cy)
-              .attr("fill", function(d, i) {
-                return that.color(d.group);
-              })
-          })
-      }
-    },
-    exlinks: function() {
-      var that = this;
-      if (that.graph) {
-        d3.select("svg").append("g")
-          .attr("class", "links")
-          .selectAll("line")
-          .data(that.graph.links)
-          .enter().append("line")
-          .attr("stroke-width", function(d) {
-            // return Math.sqrt(d.value);
-            return Math.sqrt(0.6);
-          })
-        d3.selectAll("line")
-          .each(function(d, i) {
-            // console.log('d is ')
-            // console.log(d)
-            var selection = d3.select(this)
-            selection.attr('x1', function(d) {
-                // console.log(that.graph.nodes[d.source].cx)
-                return that.graph.nodes[d.source].cx
-              })
-              .attr('y1', function(d) {
-                return that.graph.nodes[d.source].cy
-              })
-              .attr('x2', function(d) {
-                return that.graph.nodes[d.target].cx
-              })
-              .attr('y2', function(d) {
-                return that.graph.nodes[d.target].cy
-              })
-          })
-        d3.selection.prototype.moveToFront = function() {
-          return this.each(function() {
-            this.parentNode.parentNode.appendChild(this.parentNode);
-          })
-        }
-        d3.select('circle').moveToFront()
-        return d3.selectAll("line")
-      }
-    },
-    exboxes: function() {
-      var that = this
-      if (that.graph) {
-        d3.select("svg").append("g")
-          .attr("class", "rect")
-          .selectAll("rect")
-          .data(that.graph.groups)
-          .enter().append("rect")
-          .attr("stroke", "black")
-          .attr("stroke-width", 1)
-          .attr("fill", 'transparent')
-
-        function func(event) {
-          console.log(event)
-          d3.selectAll('rect')
-            .each(function(d, i) {
-              if (event.x == d.x && event.y == d.y) {
-                var selection = d3.select(this)
-                if (selection.attr('stroke') == 'black') {
-                  // selection.remove()
-                  // console.log(this.attributes.index)
-                  // d3.select("svg").append("rect")
-                  //   .attr("stroke", d3.rgb(102, 200, 255))
-                  //   .attr("stroke-width", 3)
-                  //   .attr("fill", 'transparent')
-                  //   .attr('index', this.attributes.index)
-                  //   .attr('x', this.x.animVal.value)
-                  //   .attr('y', this.y.animVal.value)
-                  //   .attr('width', this.width.animVal.value)
-                  //   .attr('height', this.height.animVal.value)
-                  //   .on('click', func)
-                  d3.selectAll('rect')
-                    .attr("stroke-width", 1)
-                    .attr('stroke', 'black')
-                  this.parentNode.appendChild(this)
-                  selection.attr("stroke-width", 3)
-                    .attr('stroke', d3.rgb(102, 200, 255))
-                  for (let i in that.graph.groups) {
-                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      that.choice = [i]
-                      break
-                    }
-                  }
-                } else if (selection.attr('stroke') == d3.rgb(102, 200, 255)) {
-                  selection.attr("stroke-width", 1)
-                    .attr('stroke', 'black')
-                  let tmp
-                  for (let i in that.graph.groups) {
-                    if (event.x == that.graph.groups[i].x && event.y == that.graph.groups[i].y) {
-                      tmp = i
-                      // console.log(i)
-                      break
-                    }
-                  }
-                  for (let i in that.choice) {
-                    if (tmp == that.choice[i]) {
-                      that.choice.splice(i, 1)
-                    }
-                  }
-                }
-              }
-            })
-          console.log(that.choice)
-        }
-
-        return d3.selectAll('rect')
-          .each(function(d, i) {
-            // console.log(d['x'])
-            // console.log(d)
-            // console.log(this)
-            // console.log(that.graph.nodes[i].cx)
-            if (d['dx'] != that.settings.svgWigth || d['dy'] != that.settings.svgHeight) {
-              var selection = d3.select(this)
-                .attr('index', i)
-                .attr('x', d['x'])
-                .attr('y', d['y'])
-                .attr('width', d['dx'])
-                .attr('height', d['dy'])
-                .on('click', func)
-            }
-          })
-      }
-    }
-    // updated: function() {
-    //   var that = this;
-    //   that.simulation.nodes(that.graph.nodes).on('tick', function ticked() {
-    //     that.links
-    //       .attr("x1", function(d) {
-    //         return d.source.x;
-    //       })
-    //       .attr("y1", function(d) {
-    //         return d.source.y;
-    //       })
-    //       .attr("x2", function(d) {
-    //         return d.target.x;
-    //       })
-    //       .attr("y2", function(d) {
-    //         return d.target.y;
-    //       });
-    //
-    //     that.nodes
-    //       .attr("cx", function(d) {
-    //         return d.x;
-    //       })
-    //       .attr("cy", function(d) {
-    //         return d.y;
-    //       });
-    //   });
-    // }
-  },
-  // updated: function() {
-  //   // console.log(this.graph.nodes[0]['cx'], this.nodes[0], this.Choice)
-  // }
 }
 </script>
 

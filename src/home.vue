@@ -20,37 +20,16 @@ export default {
       userName: 'null',
       gender: 'null',
       age: null,
-      already: null,
-      levels: [],
-      nums: [],
-      current: 0,
+      already: 0,
       total: 10,
+      nums: [0, 0],
+      levelIndex: ['high', 'low'],
+      level: null,
     }
   },
   mounted: function(){
-    let that = this
     console.log('home mounted')
-    for(let i = 0; i < that.total; i++){
-      console.log(i)
-      if(i < 6){
-        that.levels.push('high/')
-        that.nums.push(i)
-      } else {
-        that.levels.push('low/')
-        that.nums.push(i - 6)
-      }
-    }
-    for(let j = that.nums.length - 1; j > 0; j--){
-      let r = Math.floor(Math.random() * (j + 1));
-      let tmp = that.nums[j];
-      that.nums[j] = that.nums[r];
-      that.nums[r] = tmp;
-      tmp = that.levels[j];
-      that.levels[j] = that.levels[r];
-      that.levels[r] = tmp;
-    }
-    console.log(that.levels)
-    that.currentPage = 'dataInput'
+    this.currentPage = 'dataInput'
   }
 }
 </script>

@@ -5,42 +5,37 @@ import sys
 import subprocess
 
 argvs = sys.argv
-if len(argvs) != 3:
+if len(argvs) != 2:
     print('lack of argvs')
     sys.exit()
 
+os.chdir('/Users/Aoyama/Documents/Program/scalable-GIB/GIB/rust-fd-layout/')
+
 main = []
-if argvs[2] == 'all':
-    main.append('../../' + argvs[1] + '/data/STGIB/temp/')
-    main.append('../../' + argvs[1] + '/data/Chaturvedi/temp/')
-    main.append('../../' + argvs[1] + '/data/TRGIB/temp/')
-    main.append('../../' + argvs[1] + '/data/FDGIB/temp/')
+if argvs[1] == 'all':
+    main.append('../../data_generation/data/STGIB/temp/')
+    main.append('../../data_generation/data/Chaturvedi/temp/')
+    main.append('../../data_generation/data/TRGIB/temp/')
+    main.append('../../data_generation/data/FDGIB/temp/')
 else:
-    main.append('../../' + argvs[1] + '/data/' + argvs[2] + '/temp/')
+    main.append('../../data_generation/data/' + argvs[1] + '/temp/')
+
+print(main)
 
 inp = input('Are you really run this program? This can damage your data. (y/n) :')
 if inp == 'y':
-    # for dir in os.listdir(main):
-        # if (dir != '.DS_Store'):
-        # if dir == '15-0.0001-0.05':
-            # try:
-            #     for file in os.listdir(main + '/' + dir):
-            #             if (file[-5:] == '.json'):
-            #                 cmd = 'cargo run --release --example gib-cli -- -f ' + main + '/' + dir + '/' + file + ' > ' + main + '/' + dir + '/' + file[:-5] + '-nodes.txt'
-            #                 # subprocess.call( cmd.strip().split(' ') )
-            #                 os.system(cmd)
-            #                 print(dir, file)
-            # except:
-            #     pass
-    for dir in main:
-        try:
-            for file in os.listdir(dir):
+    for path in main:
+        for dir in os.listdir(path):
+            print(path + dir)
+            try:
+                for file in os.listdir(path + dir):
+                    print(file)
+                    print(dir + file)
                     if (file[-5:] == '.json'):
-                        cmd = 'cargo run --release --example gib-cli -- -f ' + dir + file + ' > ' + dir + file[:-5] + '-nodes.txt'
-                        # subprocess.call( cmd.strip().split(' ') )
+                        cmd = 'cargo run --release --example gib-cli -- -f ' + path + dir + "/" + file + ' > ' + path + dir + "/" + file[:-5] + '-nodes.txt'
                         os.system(cmd)
                         print(dir, file)
-        except:
-            pass
+            except:
+                pass
 else:
     pass
