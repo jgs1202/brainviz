@@ -24,7 +24,7 @@ npm run build
 
 ``` bash
 # change directory
-cd trgib/py
+cd data_generation/py
 
 # run program
 python run.py
